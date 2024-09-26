@@ -1,5 +1,14 @@
 module SIR_model
 
-# Write your package code here.
+# Necessary Packages
+Pkg.add("DifferentialEquations")
+using DifferentialEquations
+
+Pkg.add("Plots")
+using Plots
+
+# SIR Functions
+include("mycode.jl")
+export SIR!
 
 end
