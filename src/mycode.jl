@@ -1,31 +1,31 @@
+# Structs for different versions of the SIR models
 struct BasicSIR
     beta::Float64  # Transmission rate
     gamma::Float64  # Recovery rate
 end
 
 struct SIRForceOfInfection
-    beta::Float64  # Transmission rate
+    beta::Float64  # Transmission chance of interaction
     gammma::Float64  # Recovery rate
-    contacts::Float64  # Force of infection
+    contacts::Float64  # Number of Daily Contacts
 end
 
 struct SIRHerdImmunity
-    beta::Float64  # Transmission rate
+    beta::Float64  # Transmission chance of interaction
     gammma::Float64  # Recovery rate
-    contacts::Float64  # Force of infection
+    contacts::Float64  # Number of Daily Contacts
     herd::Float64  # Herd immunity threshold
 end
 
 ###############################################################
-# SIR! a function that represents to differential equations
-# that define the SIR model
+# This SIR! is a function that represents the differential
+# equations that defines the a SIR model
 # Inputs:
 # - dP = array of gradients for each population
 # - P = array of current values for each population
 # - params = array of other necessary parameters
 #   - beta = transmission rate
 #   - gamma = recovery rate
-#   - 
 # - t = timespan
 ###############################################################
 function SIR!(dP, P, params::BasicSIR, t)
@@ -39,12 +39,16 @@ end
 
 
 ###############################################################
-# SIR! a function that represents to differential equations
-# that define the SIR model
+# This SIR! is a function that represents the differential
+# equations that defines a more detailed force of infection
+# version of the SIR model
 # Inputs:
 # - dP = array of gradients for each population
 # - P = array of current values for each population
 # - params = array of other necessary parameters
+#   - beta = transmission chance of any interaction
+#   - gamma = recovery rate
+#   - contacts = number of daily contacts a person has
 # - t = timespan
 ###############################################################
 function SIR!(dP, P, params::SIRForceOfInfection, t)
@@ -57,12 +61,17 @@ function SIR!(dP, P, params::SIRForceOfInfection, t)
 end
 
 ###############################################################
-# SIR! a function that represents to differential equations
-# that define the SIR model
+# This SIR! is a function that represents the differential
+# equations that defines an SIR model with a herd immunity
+# threshold
 # Inputs:
 # - dP = array of gradients for each population
 # - P = array of current values for each population
 # - params = array of other necessary parameters
+#   - beta = transmission chance of any interaction
+#   - gamma = recovery rate
+#   - contacts = number of daily contacts a person has
+#   - herd = herd immunity threshold
 # - t = timespan
 ###############################################################
 function SIR!(dP, P, params::SIRHerdImmunity, t)
@@ -75,16 +84,17 @@ function SIR!(dP, P, params::SIRHerdImmunity, t)
 end
 
 ###############################################################
-# solve_SIR is a function that runs the ODE solver on the SIR!
-# function using the parameters input into this command
+# solve_SIR is a driver function that chooses the required SIR
+# model
 # Inputs:
 # - +Int: S0 = Initial Susceptible Population
 # - +Int: I0 = Initial Infected Population
 # - +Int: R0 = Initial Recovered Population
-# - +Int: contacts = No. of daily contacts any person will have
-# - +Float between 0-1: beta = Contraction chance of disease
-# - +Float between 0-1: gamma = 
+# - +Float between 0-1: beta = Transmission rate/chance of interaction
+# - +Float between 0-1: gamma = Recovery Rate
 # - +Int: days = No. of days modelled 
+# - +Int: contacts = No. of daily contacts any person will have
+# - +Float between 0-1: herd = Herd immunity threshold
 ###############################################################
 function solve_SIR(S0, I0, R0, beta, gamma, days, contacts, herd)
     # Initial populations vector
