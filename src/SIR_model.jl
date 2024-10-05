@@ -9,6 +9,6 @@ using Plots
 
 # SIR Functions
 include("mycode.jl")
-export SIR!
+export solve_SIR
 
 end
