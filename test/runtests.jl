@@ -6,10 +6,10 @@ using Test
     sol = solve_SIR(5000, 1, 0, 60, BasicSIR(0.3, 0.1))
 
     # Get the initial total population
-    initial_total = sum(sol[1])
+    initial_total = sum(sol.u[1])
 
     # Check that the total population remains the same at every time step
-    for i in sol
+    for i in sol.u
         @test sum(i) ≈ initial_total
     end
 end
