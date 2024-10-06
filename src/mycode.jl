@@ -75,6 +75,9 @@ function SIR!(dP, P, params::SIRHerdImmunity, t)
     R0 = params.contacts*params.beta/params.gamma
     pc = 1 - 1/R0
     lambda = P[2]/N*params.beta*params.contacts
+    if P[3] >= pc*N
+        lambda = 0
+    end
     dP[1] = -lambda*P[1]
     dP[2] = lambda*P[1] - params.gamma*P[2]
     dP[3] = params.gamma*P[2]
