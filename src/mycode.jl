@@ -111,5 +111,5 @@ function solve_SIR(S0, I0, R0, days, params)
     # Plot the model
     #plot(solution, xlabel="Time", ylabel="Population", title="Solution", labels=["Susceptible" "Infected" "Recovered"])
 
-    return 1
+    return solution
 end
