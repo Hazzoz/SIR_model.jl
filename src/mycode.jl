@@ -14,7 +14,6 @@ struct SIRHerdImmunity
     beta::Float64  # Transmission chance of interaction
     gamma::Float64  # Recovery rate
     contacts::Float64  # Number of Daily Contacts
-    herd::Float64  # Herd immunity threshold
 end
 
 ###############################################################
@@ -73,6 +72,8 @@ end
 ###############################################################
 function SIR!(dP, P, params::SIRHerdImmunity, t)
     N = P[1] + P[2] + P[3]
+    R0 = params.contacts*params.beta/params.gamma
+    pc = 1 - 1/R0
     lambda = P[2]/N*params.beta*params.contacts
     dP[1] = -lambda*P[1]
     dP[2] = lambda*P[1] - params.gamma*P[2]
