@@ -2,12 +2,14 @@
 struct BasicSIR
     beta::Float64  # Transmission rate
     gamma::Float64  # Recovery rate
+    lambdas::Vector{Tuple{Float64,Float64}} # Recorded array of lambdas
 end
 
 struct SIRForceOfInfection
     beta::Float64  # Transmission chance of interaction
     gamma::Float64  # Recovery rate
     contacts::Float64  # Number of Daily Contacts
+    lambdas::Vector{Tuple{Float64,Float64}} # Recorded array of lambdas
 end
 
 struct SIRHerdImmunity
@@ -15,6 +17,7 @@ struct SIRHerdImmunity
     gamma::Float64  # Recovery rate
     contacts::Float64  # Number of Daily Contacts
     herd::Float64  # Herd immunity threshold
+    lambdas::Vector{Tuple{Float64,Float64}} # Recorded array of lambdas
 end
 
 ###############################################################
@@ -26,10 +29,9 @@ end
 # - params = array of other necessary parameters
 #   - beta = transmission rate
 #   - gamma = recovery rate
-# - lambdas = vector of calculated lambdas
 # - t = timespan
 ###############################################################
-function SIR!(dP, P, params::BasicSIR, lambdas, t)
+function SIR!(dP, P, params::BasicSIR, t)
     N = P[1] + P[2] + P[3]
     lambda = P[2]*params.beta
     dP[1] = -lambda/N*P[1]
@@ -37,7 +39,7 @@ function SIR!(dP, P, params::BasicSIR, lambdas, t)
     dP[3] = params.gamma*P[2]
 
     # Store lambda at this time step
-    push!(lambdas, lambda)
+    push!(params.lambdas, (lambda, t))
 end
 
 ###############################################################
@@ -51,10 +53,9 @@ end
 #   - beta = transmission chance of any interaction
 #   - gamma = recovery rate
 #   - contacts = number of daily contacts a person has
-# - lambdas = vector of calculated lambdas
 # - t = timespan
 ###############################################################
-function SIR!(dP, P, params::SIRForceOfInfection, lambdas, t)
+function SIR!(dP, P, params::SIRForceOfInfection, t)
     N = P[1] + P[2] + P[3]
     lambda = P[2]/N*params.beta*params.contacts
     dP[1] = -lambda*P[1]
@@ -62,7 +63,7 @@ function SIR!(dP, P, params::SIRForceOfInfection, lambdas, t)
     dP[3] = params.gamma*P[2]
 
     # Store lambda at this time step
-    push!(lambdas, lambda)
+    push!(params.lambdas, (lambda, t))
 end
 
 ###############################################################
@@ -77,10 +78,9 @@ end
 #   - gamma = recovery rate
 #   - contacts = number of daily contacts a person has
 #   - herd = herd immunity threshold
-# - lambdas = vector of calculated lambdas
 # - t = timespan
 ###############################################################
-function SIR!(dP, P, params::SIRHerdImmunity, lambdas, t)
+function SIR!(dP, P, params::SIRHerdImmunity, t)
     N = P[1] + P[2] + P[3]
     lambda = P[2]/N*params.beta*params.contacts
     dP[1] = -lambda*P[1]
@@ -88,7 +88,7 @@ function SIR!(dP, P, params::SIRHerdImmunity, lambdas, t)
     dP[3] = params.gamma*P[2]
 
     # Store lambda at this time step
-    push!(lambdas, lambda)
+    push!(params.lambdas, (lambda, t))
 end
 
 ###############################################################
@@ -109,16 +109,13 @@ function solve_SIR(S0, I0, R0, days, params)
     # Initial populations vector
     P0 = [S0, I0, R0]
 
-    # Create a vector to store λ at each time step
-    lambdas = Float64[]
-
     # Time span tuple
     tspan = (0, days)
 
     # Solve the ODE with given parameters and timespan
-    solution = solve(ODEProblem(SIR!, P0, tspan, params, lambdas))
+    solution = solve(ODEProblem(SIR!, P0, tspan, params))
 
-    return solution, lambdas
+    return solution, params.lambdas
 end
 
 ###############################################################
