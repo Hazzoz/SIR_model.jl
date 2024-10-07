@@ -71,6 +71,7 @@ using Test
 end
 
 @testset "SIRForceOfInfection" begin
+    ################## Normal Function
     # Solve the SIR model and obtain the lambda values
     sol, lambdas = solve_SIR(5000,1,0,60,SIRForceOfInfection(0.3,0.5,10,[]))
 
@@ -92,6 +93,121 @@ end
 
         # Test if the manually computed lambda matches the model’s lambda
         @test lambda ≈ lambda_calc atol = 0.2
+    end
+    ################## Long Simulation Time
+    # Solve the SIR model and obtain the lambda values
+    sol, lambdas = solve_SIR(5000,1,0,200,SIRForceOfInfection(0.3,0.5,10,[]))
+
+    # Loop through the time steps and check λ calculation
+    for i in 1:length(sol.t)
+        t = sol.t[i]
+        lambda = 0
+        # Get the lambda at the current time step
+        for j in lambdas
+            if j[2] == t
+                lambda = j[1]
+                break
+            end
+        end
+
+        # Manually compute λ as β * c * I / N
+        N = 5001  # Total population (constant)
+        lambda_calc = 0.3 * 10 * sol.u[i][2] / N
+
+        # Test if the manually computed lambda matches the model’s lambda
+        @test lambda ≈ lambda_calc atol = 0.2
+    end
+    ################## Shorter Simulation Time
+    # Solve the SIR model and obtain the lambda values
+    sol, lambdas = solve_SIR(5000,1,0,10,SIRForceOfInfection(0.3,0.5,10,[]))
+
+    # Loop through the time steps and check λ calculation
+    for i in 1:length(sol.t)
+        t = sol.t[i]
+        lambda = 0
+        # Get the lambda at the current time step
+        for j in lambdas
+            if j[2] == t
+                lambda = j[1]
+                break
+            end
+        end
+
+        # Manually compute λ as β * c * I / N
+        N = 5001  # Total population (constant)
+        lambda_calc = 0.3 * 10 * sol.u[i][2] / N
+
+        # Test if the manually computed lambda matches the model’s lambda
+        @test lambda ≈ lambda_calc atol = 0.2
+    end
+    ################## High Beta
+    # Solve the SIR model and obtain the lambda values
+    sol, lambdas = solve_SIR(5000,1,0,60,SIRForceOfInfection(0.9,0.5,5,[]))
+
+    # Loop through the time steps and check λ calculation
+    for i in 1:length(sol.t)
+        t = sol.t[i]
+        lambda = 0
+        # Get the lambda at the current time step
+        for j in lambdas
+            if j[2] == t
+                lambda = j[1]
+                break
+            end
+        end
+
+        # Manually compute λ as β * c * I / N
+        N = 5001  # Total population (constant)
+        lambda_calc = 0.9 * 5 * sol.u[i][2] / N
+
+        # Test if the manually computed lambda matches the model’s lambda
+        @test lambda ≈ lambda_calc atol = 0.3
+    end
+    ################## High Gamma
+    # Solve the SIR model and obtain the lambda values
+    sol, lambdas = solve_SIR(5000,1,0,60,SIRForceOfInfection(0.3,0.9,10,[]))
+
+    # Loop through the time steps and check λ calculation
+    for i in 1:length(sol.t)
+        t = sol.t[i]
+        lambda = 0
+        # Get the lambda at the current time step
+        for j in lambdas
+            if j[2] == t
+                lambda = j[1]
+                break
+            end
+        end
+
+        # Manually compute λ as β * c * I / N
+        N = 5001  # Total population (constant)
+        lambda_calc = 0.3 * 10 * sol.u[i][2] / N
+
+        # Test if the manually computed lambda matches the model’s lambda
+        @test lambda ≈ lambda_calc atol = 0.2
+    end
+    ################## High Contacts
+    # Solve the SIR model and obtain the lambda values
+    sol, lambdas = solve_SIR(5000,1,0,60,SIRForceOfInfection(0.3,0.5,100,[]))
+
+    # Loop through the time steps and check λ calculation
+    for i in 1:length(sol.t)
+        t = sol.t[i]
+        lambda = 0
+        # Get the lambda at the current time step
+        for j in lambdas
+            if j[2] == t
+                lambda = j[1]
+                break
+            end
+        end
+
+        # Manually compute λ as β * c * I / N
+        N = 5001  # Total population (constant)
+        lambda_calc = 0.3 * 100 * sol.u[i][2] / N
+
+        # Test if the manually computed lambda matches the model’s lambda
+        @test lambda ≈ lambda_calc atol = 0.75
     end
 end
 
