@@ -109,3 +109,23 @@ function solve_SIR(S0, I0, R0, days, params)
 
     return solution
 end
+
+###############################################################
+# plot_SIR is a driver function to solve and plot the SIR model
+# Inputs:
+# - +Int: S0 = Initial Susceptible Population
+# - +Int: I0 = Initial Infected Population
+# - +Int: R0 = Initial Recovered Population
+# - +Float between 0-1: beta = Transmission rate/chance of interaction
+# - +Float between 0-1: gamma = Recovery Rate
+# - +Int: days = No. of days modelled 
+# - +Int: contacts = No. of daily contacts any person will have
+# - +Float between 0-1: herd = Herd immunity threshold
+###############################################################
+function plot_SIR(S0, I0, R0, days, params)
+    # Solve the SIR model
+    solution = solve_SIR(S0, I0, R0, days, params)
+
+    # Plot the model
+    plot(solution, xlabel="Time", ylabel="Population", title="Solution", labels=["Susceptible" "Infected" "Recovered"])
+end
