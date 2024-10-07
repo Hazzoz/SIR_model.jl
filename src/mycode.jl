@@ -140,7 +140,7 @@ end
 ###############################################################
 function plot_SIR(S0, I0, R0, days, params)
     # Solve the SIR model
-    solution = solve_SIR(S0, I0, R0, days, params)
+    solution, lambdas = solve_SIR(S0, I0, R0, days, params)
 
     # Plot the model
     plot(solution, xlabel="Time", ylabel="Population", title="Solution", labels=["Susceptible" "Infected" "Recovered"])
