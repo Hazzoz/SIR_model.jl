@@ -2,8 +2,64 @@ using SIR_model
 using Test
 
 @testset "BasicSIR" begin
+    ##################### Normal Test
     # Solve the SIR model
     sol, lambdas = solve_SIR(5000, 1, 0, 60, BasicSIR(0.3, 0.1, []))
+
+    # Get the initial total population
+    initial_total = sum(sol.u[1])
+
+    # Check that the total population remains the same at every time step
+    for i in sol.u
+        @test sum(i) ≈ initial_total
+    end
+    ##################### Longer Simulation Time
+    # Solve the SIR model
+    sol, lambdas = solve_SIR(5000, 1, 0, 200, BasicSIR(0.3, 0.1, []))
+
+    # Get the initial total population
+    initial_total = sum(sol.u[1])
+
+    # Check that the total population remains the same at every time step
+    for i in sol.u
+        @test sum(i) ≈ initial_total
+    end
+    ##################### Shorter Simulation Time
+    # Solve the SIR model
+    sol, lambdas = solve_SIR(5000, 1, 0, 10, BasicSIR(0.3, 0.1, []))
+
+    # Get the initial total population
+    initial_total = sum(sol.u[1])
+
+    # Check that the total population remains the same at every time step
+    for i in sol.u
+        @test sum(i) ≈ initial_total
+    end
+    ##################### No Infected
+    # Solve the SIR model
+    sol, lambdas = solve_SIR(5000, 0, 0, 60, BasicSIR(0.3, 0.1, []))
+
+    # Get the initial total population
+    initial_total = sum(sol.u[1])
+
+    # Check that the total population remains the same at every time step
+    for i in sol.u
+        @test sum(i) ≈ initial_total
+    end
+    ##################### High Beta
+    # Solve the SIR model
+    sol, lambdas = solve_SIR(5000, 1, 0, 60, BasicSIR(0.9, 0.1, []))
+
+    # Get the initial total population
+    initial_total = sum(sol.u[1])
+
+    # Check that the total population remains the same at every time step
+    for i in sol.u
+        @test sum(i) ≈ initial_total
+    end
+    ##################### High Gamma
+    # Solve the SIR model
+    sol, lambdas = solve_SIR(5000, 1, 0, 60, BasicSIR(0.3, 0.9, []))
 
     # Get the initial total population
     initial_total = sum(sol.u[1])
@@ -41,7 +97,7 @@ end
 
 @testset "SIRHerdImmunity" begin
     # Solve the SIR model
-    sol = solve_SIR(5000,1,0,60,SIRHerdImmunity(0.3,0.5,10))
+    sol, lambda = solve_SIR(5000,1,0,60,SIRHerdImmunity(0.3,0.5,10,[]))
 
     # Calculate the herd immunity threshold
     R0 = 0.3*10/0.5
