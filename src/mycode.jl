@@ -16,7 +16,6 @@ struct SIRHerdImmunity
     beta::Float64  # Transmission chance of interaction
     gamma::Float64  # Recovery rate
     contacts::Float64  # Number of Daily Contacts
-    herd::Float64  # Herd immunity threshold
     lambdas::Vector{Tuple{Float64,Float64}} # Recorded array of lambdas
 end
 
