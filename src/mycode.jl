@@ -104,15 +104,14 @@ end
 # solve_SIR is a driver function that chooses the required SIR
 # model
 # Inputs:
-# - +Int: S0 = Initial Susceptible Population
-# - +Int: I0 = Initial Infected Population
-# - +Int: R0 = Initial Recovered Population
-# - +Int: days = No. of days modelled 
+# - S0 = Initial Susceptible Population
+# - I0 = Initial Infected Population
+# - R0 = Initial Recovered Population
+# - days = No. of days modelled 
 # - params = array of other necessary parameters
 #   - beta = transmission chance of any interaction
 #   - gamma = recovery rate
 #   - contacts = number of daily contacts a person has
-#   - herd = herd immunity threshold
 ###############################################################
 function solve_SIR(S0, I0, R0, days, params)
     P0 = [S0, I0, R0] # Initial populations vector
@@ -127,14 +126,14 @@ end
 ###############################################################
 # plot_SIR is a driver function to solve and plot the SIR model
 # Inputs:
-# - +Int: S0 = Initial Susceptible Population
-# - +Int: I0 = Initial Infected Population
-# - +Int: R0 = Initial Recovered Population
-# - +Float between 0-1: beta = Transmission rate/chance of interaction
-# - +Float between 0-1: gamma = Recovery Rate
-# - +Int: days = No. of days modelled 
-# - +Int: contacts = No. of daily contacts any person will have
-# - +Float between 0-1: herd = Herd immunity threshold
+# - S0 = Initial Susceptible Population
+# - I0 = Initial Infected Population
+# - R0 = Initial Recovered Population
+# - days = No. of days modelled 
+# - params = array of other necessary parameters
+#   - beta = transmission chance of any interaction
+#   - gamma = recovery rate
+#   - contacts = number of daily contacts a person has
 ###############################################################
 function plot_SIR(S0, I0, R0, days, params)
     solution, lambdas = solve_SIR(S0, I0, R0, days, params) # Solve the SIR model

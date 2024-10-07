@@ -59,7 +59,7 @@ using Test
     end
     ##################### High Gamma
     # Solve the SIR model
-    sol, lambdas = solve_SIR(5000, 1, 0, 60, BasicSIR(0.3, 0.9, []))
+    sol, lambdas = solve_SIR(5000, 1, 0, 60, BasicSIR(0.3, 2, []))
 
     # Get the initial total population
     initial_total = sum(sol.u[1])
@@ -165,7 +165,7 @@ end
     end
     ################## High Gamma
     # Solve the SIR model and obtain the lambda values
-    sol, lambdas = solve_SIR(5000,1,0,60,SIRForceOfInfection(0.3,0.9,10,[]))
+    sol, lambdas = solve_SIR(5000,1,0,60,SIRForceOfInfection(0.3,2,10,[]))
 
     # Loop through the time steps and check λ calculation
     for i in 1:length(sol.t)
@@ -258,7 +258,7 @@ end
     end
     ##################### High Gamma
     # Solve the SIR model
-    sol, lambda = solve_SIR(5000,1,0,60,SIRHerdImmunity(0.3,0.9,10,[]))
+    sol, lambda = solve_SIR(5000,1,0,60,SIRHerdImmunity(0.3,2,10,[]))
 
     # Calculate the herd immunity threshold
     R0 = 0.3*10/0.5
