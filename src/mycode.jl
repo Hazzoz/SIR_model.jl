@@ -32,14 +32,14 @@ end
 # - t = timespan
 ###############################################################
 function SIR!(dP, P, params::BasicSIR, t)
-    N = P[1] + P[2] + P[3]
-    lambda = P[2]*params.beta
-    dP[1] = -lambda/N*P[1]
-    dP[2] = lambda/N*P[1] - params.gamma*P[2]
-    dP[3] = params.gamma*P[2]
+    N = P[1] + P[2] + P[3] # Total Population
+    lambda = P[2]*params.beta # Force of Infection
+    dP[1] = -lambda/N*P[1] # Change in Susceptible Population
+    dP[2] = lambda/N*P[1] - params.gamma*P[2] # Change in Infected Population
+    dP[3] = params.gamma*P[2] # Change in Recovered Population
 
     # Store lambda at this time step
-    push!(params.lambdas, (lambda, t))
+    push!(params.lambdas, (lambda, t)) # Storing lambda values
 end
 
 ###############################################################
@@ -57,14 +57,14 @@ end
 # - t = timespan
 ###############################################################
 function SIR!(dP, P, params::SIRForceOfInfection, t)
-    N = P[1] + P[2] + P[3]
-    lambda = P[2]/N*params.beta*params.contacts
-    dP[1] = -lambda*P[1]
-    dP[2] = lambda*P[1] - params.gamma*P[2]
-    dP[3] = params.gamma*P[2]
+    N = P[1] + P[2] + P[3] # Total Population
+    lambda = P[2]/N*params.beta*params.contacts # Force of Infection
+    dP[1] = -lambda*P[1] # Change in Susceptible Population
+    dP[2] = lambda*P[1] - params.gamma*P[2] # Change in Infected Population
+    dP[3] = params.gamma*P[2] # Change in Recovered Population
 
     # Store lambda at this time step
-    push!(params.lambdas, (lambda, t))
+    push!(params.lambdas, (lambda, t)) # Storing lambda values
 end
 
 ###############################################################
@@ -83,19 +83,21 @@ end
 # - t = timespan
 ###############################################################
 function SIR!(dP, P, params::SIRHerdImmunity, t)
-    N = P[1] + P[2] + P[3]
+    N = P[1] + P[2] + P[3] # Total Population
     R0 = params.contacts*params.beta/params.gamma
-    pc = 1 - 1/R0
-    lambda = P[2]/N*params.beta*params.contacts
-    if P[3] >= pc*N
+    pc = 1 - 1/R0 # Herd immunity threshold
+    lambda = P[2]/N*params.beta*params.contacts  # Force of Infection
+    #if P[3]+P[2] >= pc*N
+    if P[3] >= pc*N # Check if recovered population exceeds herd immunity threshold
         lambda = 0
     end
-    dP[1] = -lambda*P[1]
-    dP[2] = lambda*P[1] - params.gamma*P[2]
-    dP[3] = params.gamma*P[2]
+
+    dP[1] = -lambda*P[1] # Change in Susceptible Population
+    dP[2] = lambda*P[1] - params.gamma*P[2] # Change in Infected Population
+    dP[3] = params.gamma*P[2] # Change in Recovered Population
 
     # Store lambda at this time step
-    push!(params.lambdas, (lambda, t))
+    push!(params.lambdas, (lambda, t)) # Storing lambda values
 end
 
 ###############################################################
@@ -113,16 +115,13 @@ end
 #   - herd = herd immunity threshold
 ###############################################################
 function solve_SIR(S0, I0, R0, days, params)
-    # Initial populations vector
-    P0 = [S0, I0, R0]
+    P0 = [S0, I0, R0] # Initial populations vector
 
-    # Time span tuple
-    tspan = (0, days)
+    tspan = (0, days) # Time span tuple
 
-    # Solve the ODE with given parameters and timespan
-    solution = solve(ODEProblem(SIR!, P0, tspan, params))
+    solution = solve(ODEProblem(SIR!, P0, tspan, params)) # Solve the ODE with given parameters and timespan
 
-    return solution, params.lambdas
+    return solution, params.lambdas # Return values
 end
 
 ###############################################################
@@ -138,9 +137,7 @@ end
 # - +Float between 0-1: herd = Herd immunity threshold
 ###############################################################
 function plot_SIR(S0, I0, R0, days, params)
-    # Solve the SIR model
-    solution, lambdas = solve_SIR(S0, I0, R0, days, params)
+    solution, lambdas = solve_SIR(S0, I0, R0, days, params) # Solve the SIR model
 
-    # Plot the model
-    plot(solution, xlabel="Time", ylabel="Population", title="Solution", labels=["Susceptible" "Infected" "Recovered"])
+    plot(solution, xlabel="Time", ylabel="Population", title="Solution", labels=["Susceptible" "Infected" "Recovered"]) # Plot the model
 end
