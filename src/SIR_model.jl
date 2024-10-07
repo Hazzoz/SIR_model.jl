@@ -6,7 +6,7 @@ module SIR_model
 
     # SIR Functions
     include("mycode.jl")
-    export solve_SIR
+    export solve_SIR, plot_SIR
     export BasicSIR, SIRForceOfInfection, SIRHerdImmunity
 
 end

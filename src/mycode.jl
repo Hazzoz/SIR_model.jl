@@ -29,6 +29,7 @@ end
 # - params = array of other necessary parameters
 #   - beta = transmission rate
 #   - gamma = recovery rate
+#   - lambdas = recorded array of lambdas with timestamps
 # - t = timespan
 ###############################################################
 function SIR!(dP, P, params::BasicSIR, t)
@@ -53,6 +54,7 @@ end
 #   - beta = transmission chance of any interaction
 #   - gamma = recovery rate
 #   - contacts = number of daily contacts a person has
+#   - lambdas = recorded array of lambdas with timestamps
 # - t = timespan
 ###############################################################
 function SIR!(dP, P, params::SIRForceOfInfection, t)
@@ -78,6 +80,7 @@ end
 #   - gamma = recovery rate
 #   - contacts = number of daily contacts a person has
 #   - herd = herd immunity threshold
+#   - lambdas = recorded array of lambdas with timestamps
 # - t = timespan
 ###############################################################
 function SIR!(dP, P, params::SIRHerdImmunity, t)
