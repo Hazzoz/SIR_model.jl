@@ -26,14 +26,18 @@ end
 # - params = array of other necessary parameters
 #   - beta = transmission rate
 #   - gamma = recovery rate
+# - lambdas = vector of calculated lambdas
 # - t = timespan
 ###############################################################
-function SIR!(dP, P, params::BasicSIR, t)
+function SIR!(dP, P, params::BasicSIR, lambdas, t)
     N = P[1] + P[2] + P[3]
     lambda = P[2]*params.beta
     dP[1] = -lambda/N*P[1]
     dP[2] = lambda/N*P[1] - params.gamma*P[2]
     dP[3] = params.gamma*P[2]
+
+    # Store lambda at this time step
+    push!(lambdas, lambda)
 end
 
 ###############################################################
@@ -47,14 +51,18 @@ end
 #   - beta = transmission chance of any interaction
 #   - gamma = recovery rate
 #   - contacts = number of daily contacts a person has
+# - lambdas = vector of calculated lambdas
 # - t = timespan
 ###############################################################
-function SIR!(dP, P, params::SIRForceOfInfection, t)
+function SIR!(dP, P, params::SIRForceOfInfection, lambdas, t)
     N = P[1] + P[2] + P[3]
     lambda = P[2]/N*params.beta*params.contacts
     dP[1] = -lambda*P[1]
     dP[2] = lambda*P[1] - params.gamma*P[2]
     dP[3] = params.gamma*P[2]
+
+    # Store lambda at this time step
+    push!(lambdas, lambda)
 end
 
 ###############################################################
@@ -69,14 +77,18 @@ end
 #   - gamma = recovery rate
 #   - contacts = number of daily contacts a person has
 #   - herd = herd immunity threshold
+# - lambdas = vector of calculated lambdas
 # - t = timespan
 ###############################################################
-function SIR!(dP, P, params::SIRHerdImmunity, t)
+function SIR!(dP, P, params::SIRHerdImmunity, lambdas, t)
     N = P[1] + P[2] + P[3]
     lambda = P[2]/N*params.beta*params.contacts
     dP[1] = -lambda*P[1]
     dP[2] = lambda*P[1] - params.gamma*P[2]
     dP[3] = params.gamma*P[2]
+
+    # Store lambda at this time step
+    push!(lambdas, lambda)
 end
 
 ###############################################################
@@ -86,28 +98,27 @@ end
 # - +Int: S0 = Initial Susceptible Population
 # - +Int: I0 = Initial Infected Population
 # - +Int: R0 = Initial Recovered Population
-# - +Float between 0-1: beta = Transmission rate/chance of interaction
-# - +Float between 0-1: gamma = Recovery Rate
 # - +Int: days = No. of days modelled 
-# - +Int: contacts = No. of daily contacts any person will have
-# - +Float between 0-1: herd = Herd immunity threshold
+# - params = array of other necessary parameters
+#   - beta = transmission chance of any interaction
+#   - gamma = recovery rate
+#   - contacts = number of daily contacts a person has
+#   - herd = herd immunity threshold
 ###############################################################
 function solve_SIR(S0, I0, R0, days, params)
     # Initial populations vector
     P0 = [S0, I0, R0]
 
+    # Create a vector to store λ at each time step
+    lambdas = Float64[]
+
     # Time span tuple
     tspan = (0, days)
 
     # Solve the ODE with given parameters and timespan
-    solution = solve(ODEProblem(SIR!, P0, tspan, params))
+    solution = solve(ODEProblem(SIR!, P0, tspan, params, lambdas))
 
-    #println(solution.u)
-
-    # Plot the model
-    #plot(solution, xlabel="Time", ylabel="Population", title="Solution", labels=["Susceptible" "Infected" "Recovered"])
-
-    return solution
+    return solution, lambdas
 end
 
 ###############################################################
