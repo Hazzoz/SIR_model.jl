@@ -100,7 +100,7 @@ function SIR!(dP, P, params::SIRHerdImmunity, t)
     push!(params.lambdas, (lambda, t)) # Storing lambda values
 end
 
-###############################################################
+"""
 # solve_SIR is a driver function that chooses the required SIR
 # model
 # Inputs:
@@ -112,7 +112,7 @@ end
 #   - beta = transmission chance of any interaction
 #   - gamma = recovery rate
 #   - contacts = number of daily contacts a person has
-###############################################################
+"""
 function solve_SIR(S0, I0, R0, days, params)
     P0 = [S0, I0, R0] # Initial populations vector
 
@@ -123,7 +123,7 @@ function solve_SIR(S0, I0, R0, days, params)
     return solution, params.lambdas # Return values
 end
 
-###############################################################
+"""
 # plot_SIR is a driver function to solve and plot the SIR model
 # Inputs:
 # - S0 = Initial Susceptible Population
@@ -134,9 +134,47 @@ end
 #   - beta = transmission chance of any interaction
 #   - gamma = recovery rate
 #   - contacts = number of daily contacts a person has
-###############################################################
+"""
 function plot_SIR(S0, I0, R0, days, params)
     solution, lambdas = solve_SIR(S0, I0, R0, days, params) # Solve the SIR model
 
     plot(solution, xlabel="Time", ylabel="Population", title="Solution", labels=["Susceptible" "Infected" "Recovered"]) # Plot the model
+end
+
+function get_vals(S0, I0, R0, days, params)
+    solution, lambdas = solve_SIR(S0, I0, R0, days, params) # Solve the SIR model
+
+    plot(solution, xlabel="Time", ylabel="Population", title="Solution", labels=["Susceptible" "Infected" "Recovered"]) # Plot the model
+
+    println("Number of Infected Ever: ", solution.u[length(solution.t)][2] + solution.u[length(solution.t)][3])
+
+    peak_day = 0
+    peak_val = 0
+    for j in 1:length(solution.t)
+        if peak_val < solution.u[j][2]
+            peak_val = solution.u[j][2]
+            peak_day = solution.t[j]
+        end
+    end
+
+    println("Peak Day of Infections: ", peak_day)
+end
+
+function compare_vals(S0, I0, R0, days, params)
+    solution, lambdas = solve_SIR(S0, I0, R0, days, params) # Solve the SIR model
+
+    actual_vals = [5, 10, 19, 37, 71, 136, 260, 486, 882, 1516, 2399, 3407, 4300, 4882, 5116, 5080, 4875, 4582, 4251, 3913, 3583, 3271, 2979, 2708, 2460, 2233, 2026, 1837, 1665, 1509]
+    model_vals = []
+
+    for j in solution.u
+        push!(model_vals,j[2])
+    end
+
+    R0 = params.contacts*params.beta/params.gamma
+    pc = 1 - 1/R0 # Herd immunity threshold
+    println("Herd immunity threshold: ", pc)
+
+    plot(solution, xlabel="Time", ylabel="Population", title="Solution", labels=["Susceptible" "Infected" "Recovered"]) # Plot the model
+    plot!(actual_vals, xlabel="Time", ylabel="Population", title="Solution", labels=["Actual"]) # Plot the model
+
 end
